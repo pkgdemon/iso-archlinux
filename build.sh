@@ -61,7 +61,8 @@ pacstrap -c $CHROOT_DIR base base-devel linux-lts zsh mkinitcpio-archiso sudo gi
   xfce4-panel xfce4-session xfwm4 xfce4-settings xfce4-terminal xfce4-clipman-plugin neofetch \
   networkmanager network-manager-applet nm-connection-editor net-tools wireless_tools wpa_supplicant \
   gtk2 glib2 gtk-chtheme meson ninja vala glib2-devel gobject-introspection libdbusmenu-gtk2 appmenu-gtk-module \
-  chromium sddm scrot ffmpeg
+  chromium sddm scrot ffmpeg \
+  linux-firmware
 
 # Install skeleton for new users
 cp -R overlays/etc/* "$CHROOT_DIR/etc"
