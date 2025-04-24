@@ -130,7 +130,8 @@ systemd-nspawn -D "$CHROOT_DIR" --user=hexley \
     --setenv=USER=hexley --setenv=HOME=/Users/hexley \
     bash -c "cd /Users/hexley &&
              yay -S --noconfirm --removemake --needed package-name gconf
-             yay -S --noconfirm --removemake --needed package-name adobe-base-14-fonts"
+             yay -S --noconfirm --removemake --needed package-name adobe-base-14-fonts
+             yay -S --noconfirm --removemake --needed package-name swift-bin"
 
 # Install YellowBox
 echo "Installing YellowBox..."
