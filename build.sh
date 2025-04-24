@@ -277,7 +277,7 @@ cp "$CHROOT_DIR/boot/initramfs-linux-lts.img" "$BOOT_DIR/initramfs-linux-lts.img
 
 # Create the FAT32 image for the EFI System Partition (ESP)
 echo "Creating FAT32 image for EFI partition..."
-dd if=/dev/zero of="$ESP_IMG" bs=1M count=100  # Create a 100MB FAT32 partition image
+dd if=/dev/zero of="$ESP_IMG" bs=1M count=256  # Create a 256MB FAT32 partition image
 mkfs.fat -F32 "$ESP_IMG"  # Format the image as FAT32
 
 # Mount the FAT32 image to copy systemd-boot files into it
