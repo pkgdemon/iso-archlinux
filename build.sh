@@ -62,7 +62,7 @@ pacstrap -c $CHROOT_DIR base base-devel linux-lts zsh mkinitcpio-archiso sudo gi
   networkmanager network-manager-applet nm-connection-editor net-tools wireless_tools wpa_supplicant \
   gtk2 glib2 gtk-chtheme meson ninja vala glib2-devel gobject-introspection libdbusmenu-gtk2 appmenu-gtk-module \
   chromium sddm scrot ffmpeg \
-  linux-firmware linux-lts-headers
+  linux-firmware linux-lts-headers gptfdisk
 
 # Add ArchZFS repository to chroot
 echo "Adding ArchZFS repository to chroot..."
