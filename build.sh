@@ -62,7 +62,23 @@ pacstrap -c $CHROOT_DIR base base-devel linux-lts zsh mkinitcpio-archiso sudo gi
   networkmanager network-manager-applet nm-connection-editor net-tools wireless_tools wpa_supplicant \
   gtk2 glib2 gtk-chtheme meson ninja vala glib2-devel gobject-introspection libdbusmenu-gtk2 appmenu-gtk-module \
   chromium sddm scrot ffmpeg \
-  linux-firmware
+  linux-firmware linux-lts-headers
+
+# Add ArchZFS repository to chroot
+echo "Adding ArchZFS repository to chroot..."
+cat >> "$CHROOT_DIR/etc/pacman.conf" <<EOF
+
+[archzfs]
+Server = https://zxcvfdsa.com/archzfs/\$repo/\$arch
+EOF
+
+# Update pacman database and install zfs-linux-lts inside chroot
+echo "Installing zfs-linux-lts inside chroot..."
+systemd-nspawn -D "$CHROOT_DIR" bash -c "
+  pacman-key -r DDF7DB817396A49B2A2723F7403BD972F75D9D76
+  pacman-key --lsign-key DDF7DB817396A49B2A2723F7403BD972F75D9D76
+  pacman -Syu --noconfirm &&
+  pacman -S --noconfirm zfs-dkms"
 
 # Install skeleton for new users
 cp -R overlays/etc/* "$CHROOT_DIR/etc"
