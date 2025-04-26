@@ -140,6 +140,10 @@ cat > "$CHROOT_DIR//etc/sudoers.d/ngstep" <<EOF
 Defaults env_keep += "PATH GNUSTEP_MAKEFILES GNUSTEP_PATHS LD_LIBRARY_PATH DYLD_LIBRARY_PATH OBJC_RUNTIME OBJCFLAGS"
 EOF
 chmod 440 "$CHROOT_DIR/etc/sudoers.d/ngstep"
+cat > "$CHROOT_DIR/etc/sudoers.d/10_ngstep_secure_path" <<EOF
+Defaults secure_path="/System/Library/Tools:/usr/local/sbin:/usr/local/bin:/usr/bin"
+EOF
+chmod 440 "$CHROOT_DIR/etc/sudoers.d/10_ngstep_secure_path"
 
 # Enter chroot environment and install AUR packages
 echo "Entering chroot environment with systemd-nspawn to install AUR packages..."
