@@ -133,7 +133,13 @@ systemd-nspawn -D "$CHROOT_DIR" \
 cat > "$CHROOT_DIR//etc/sudoers.d/00_hexley" <<EOF
 hexley ALL=(ALL) ALL
 EOF
-chmod 440 "$CHROOT_DIR//etc/sudoers.d/00_hexley"
+chmod 440 "$CHROOT_DIR/etc/sudoers.d/00_hexley"
+
+# Create sudoers for ngstep system wide vars
+cat > "$CHROOT_DIR//etc/sudoers.d/ngstep" <<EOF
+Defaults env_keep += "PATH GNUSTEP_MAKEFILES GNUSTEP_PATHS LD_LIBRARY_PATH DYLD_LIBRARY_PATH OBJC_RUNTIME OBJCFLAGS"
+EOF
+chmod 440 "$CHROOT_DIR/etc/sudoers.d/ngstep"
 
 # Enter chroot environment and install AUR packages
 echo "Entering chroot environment with systemd-nspawn to install AUR packages..."
@@ -266,6 +272,10 @@ EOF
 # Generate the initramfs for the LTS kernel
 echo "Generating initramfs for LTS kernel..."
 systemd-nspawn -D "$CHROOT_DIR" mkinitcpio -c /etc/mkinitcpio.conf.d/archiso.conf -p linux-lts
+
+# Cleanup before making SquashFS image
+systemd-nspawn -D "$CHROOT_DIR" bash -c "pacman -Scc --noconfirm"
+rm -rf "$CHROOT_DIR/Users/hexley/.cache/yay"
 
 # Create a SquashFS image of the chroot environment
 echo "Creating SquashFS image of the chroot environment..."
