@@ -136,10 +136,10 @@ EOF
 chmod 440 "$CHROOT_DIR/etc/sudoers.d/00_hexley"
 
 # Create sudoers for ngstep system wide vars
-cat > "$CHROOT_DIR//etc/sudoers.d/ngstep" <<EOF
+cat > "$CHROOT_DIR//etc/sudoers.d/10_ngstep_env_keep" <<EOF
 Defaults env_keep += "PATH GNUSTEP_MAKEFILES GNUSTEP_PATHS LD_LIBRARY_PATH DYLD_LIBRARY_PATH OBJC_RUNTIME OBJCFLAGS"
 EOF
-chmod 440 "$CHROOT_DIR/etc/sudoers.d/ngstep"
+chmod 440 "$CHROOT_DIR/etc/sudoers.d/10_ngstep_env_keep""
 cat > "$CHROOT_DIR/etc/sudoers.d/10_ngstep_secure_path" <<EOF
 Defaults secure_path="/System/Library/Tools:/usr/local/sbin:/usr/local/bin:/usr/bin"
 EOF
