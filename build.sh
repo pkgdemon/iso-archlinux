@@ -283,7 +283,7 @@ rm -rf "$CHROOT_DIR/Users/hexley/.cache/yay"
 
 # Create a SquashFS image of the chroot environment
 echo "Creating SquashFS image of the chroot environment..."
-mksquashfs "$CHROOT_DIR" "$SQUASHFS_IMG" -b 1M -comp xz
+mksquashfs "$CHROOT_DIR" "$SQUASHFS_IMG" -b 4M -comp xz -Xdict-size 100% -noappend -always-use-fragments
 
 # Set up the boot directory structure for BIOS and UEFI
 echo "Setting up systemd-boot and kernel..."
