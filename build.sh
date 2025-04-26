@@ -62,7 +62,7 @@ pacstrap -c $CHROOT_DIR base base-devel linux-lts zsh mkinitcpio-archiso sudo gi
   networkmanager network-manager-applet nm-connection-editor net-tools wireless_tools wpa_supplicant \
   gtk2 glib2 gtk-chtheme meson ninja vala glib2-devel gobject-introspection libdbusmenu-gtk2 appmenu-gtk-module \
   chromium sddm scrot ffmpeg \
-  linux-firmware linux-lts-headers gptfdisk
+  linux-firmware linux-lts-headers gptfdisk dosfstools squashfs-tools wget efibootmgr
 
 # Add ArchZFS repository to chroot
 echo "Adding ArchZFS repository to chroot..."
@@ -79,6 +79,11 @@ systemd-nspawn -D "$CHROOT_DIR" bash -c "
   pacman-key --lsign-key DDF7DB817396A49B2A2723F7403BD972F75D9D76
   pacman -Syu --noconfirm &&
   pacman -S --noconfirm zfs-dkms"
+
+# Get ZFSBootMenu
+echo "Fetching ZFSBootMenu"
+systemd-nspawn -D "$CHROOT_DIR" \
+    bash -c "wget -qO /zfsbootmenu.EFI https://get.zfsbootmenu.org/latest.EFI"
 
 # Install skeleton for new users
 cp -R overlays/etc/* "$CHROOT_DIR/etc"
@@ -147,7 +152,8 @@ systemd-nspawn -D "$CHROOT_DIR" --user=hexley \
     bash -c "cd /Users/hexley &&
              yay -S --noconfirm --removemake --needed package-name gconf
              yay -S --noconfirm --removemake --needed package-name adobe-base-14-fonts
-             yay -S --noconfirm --removemake --needed package-name swift-bin"
+             yay -S --noconfirm --removemake --needed package-name swift-bin
+             yay -S --noconfirm --removemake --needed package-name zectl"
 
 # Install YellowBox
 echo "Installing YellowBox..."
