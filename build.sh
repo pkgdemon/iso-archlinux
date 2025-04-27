@@ -154,6 +154,7 @@ if [ -d "$YAY_CACHE_DIR" ]; then
   echo "Restoring yay cache into chroot..."
   mkdir -p "$CHROOT_DIR/Users/hexley/.cache"
   cp -a "$YAY_CACHE_DIR" "$CHROOT_DIR/Users/hexley/.cache/yay"
+  chown -R 1000:1000 "$CHROOT_DIR/Users/hexley/.cache"
 fi
 
 # Enter chroot environment and install AUR packages
