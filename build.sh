@@ -8,6 +8,7 @@ fi
 
 # Variables
 BASE_DIR="/ngstep"
+YAY_CACHE_DIR="$BASE_DIR/yay-cache"
 WORK_DIR="$BASE_DIR/arch-chroot-iso"
 
 CHROOT_DIR="$WORK_DIR/arch-chroot"
@@ -32,8 +33,13 @@ ISO_OUTPUT_DIR="$BASE_DIR/arch-iso-output"
 ISO_NAME="ngstep-amd64-uefi.iso"
 
 # Cleanup previous runs
-umount "$ESP_MNT"
-rm -rf "$BASE_DIR"
+umount "$ESP_MNT" 2>/dev/null || true
+# Only delete specific build directories
+rm -rf "$WORK_DIR"
+rm -rf "$ARCH_DIR"
+rm -rf "$CHROOT_DIR"
+rm -rf "$ESP_DIR"
+rm -rf "$ISO_OUTPUT_DIR"
 
 # Set up Arch Linux chroot environment
 echo "Setting up Arch Linux chroot environment..."
@@ -62,7 +68,7 @@ pacstrap -c $CHROOT_DIR base base-devel linux-lts zsh mkinitcpio-archiso sudo gi
   networkmanager network-manager-applet nm-connection-editor net-tools wireless_tools wpa_supplicant \
   gtk2 glib2 gtk-chtheme meson ninja vala glib2-devel gobject-introspection libdbusmenu-gtk2 appmenu-gtk-module \
   chromium sddm scrot ffmpeg \
-  linux-firmware linux-lts-headers gptfdisk dosfstools squashfs-tools wget efibootmgr
+  linux-firmware linux-lts-headers gptfdisk dosfstools squashfs-tools wget efibootmgr zfs-dkms
 
 # Add ArchZFS repository to chroot
 echo "Adding ArchZFS repository to chroot..."
@@ -72,13 +78,11 @@ cat >> "$CHROOT_DIR/etc/pacman.conf" <<EOF
 Server = https://zxcvfdsa.com/archzfs/\$repo/\$arch
 EOF
 
-# Update pacman database and install zfs-linux-lts inside chroot
-echo "Installing zfs-linux-lts inside chroot..."
+# Setup repo for zfs keys inside chroot
+echo "Installing zfs repo keys inside chroot..."
 systemd-nspawn -D "$CHROOT_DIR" bash -c "
   pacman-key -r DDF7DB817396A49B2A2723F7403BD972F75D9D76
-  pacman-key --lsign-key DDF7DB817396A49B2A2723F7403BD972F75D9D76
-  pacman -Syu --noconfirm &&
-  pacman -S --noconfirm zfs-dkms"
+  pacman-key --lsign-key DDF7DB817396A49B2A2723F7403BD972F75D9D76"
 
 # Get ZFSBootMenu
 echo "Fetching ZFSBootMenu"
@@ -145,6 +149,13 @@ Defaults secure_path="/System/Library/Tools:/usr/local/sbin:/usr/local/bin:/usr/
 EOF
 chmod 440 "$CHROOT_DIR/etc/sudoers.d/10_ngstep_secure_path"
 
+# Restore yay cache (if exists)
+if [ -d "$YAY_CACHE_DIR" ]; then
+  echo "Restoring yay cache into chroot..."
+  mkdir -p "$CHROOT_DIR/Users/hexley/.cache"
+  cp -a "$YAY_CACHE_DIR" "$CHROOT_DIR/Users/hexley/.cache/yay"
+fi
+
 # Enter chroot environment and install AUR packages
 echo "Entering chroot environment with systemd-nspawn to install AUR packages..."
 systemd-nspawn -D "$CHROOT_DIR" --user=hexley \
@@ -164,6 +175,11 @@ systemd-nspawn -D "$CHROOT_DIR" --user=hexley \
              yay -S --noconfirm --removemake --needed package-name adobe-base-14-fonts
              yay -S --noconfirm --removemake --needed package-name swift-bin
              yay -S --noconfirm --removemake --needed package-name zectl"
+
+# Save updated yay cache
+echo "Saving updated yay cache..."
+mkdir -p "$YAY_CACHE_DIR"
+cp -a "$CHROOT_DIR/Users/hexley/.cache/yay/." "$YAY_CACHE_DIR/"
 
 # Install YellowBox
 echo "Installing YellowBox..."
@@ -301,7 +317,7 @@ default arch-live.conf
 timeout 5
 EOF
 
-# This may not be needed but testing
+# Add identifier for squashfs mounting
 mkdir "$WORK_DIR/boot"
 touch "$WORK_DIR/boot/2025-03-01-17-40-22-00.uuid"
 
