@@ -251,6 +251,7 @@ systemd-nspawn -D "$CHROOT_DIR" \
 
 # Create XDG session for YellowBox
 echo "Create XDG session..."
+mkdir -p "$CHROOT_DIR/usr/share/xsessions"
 cat > "$CHROOT_DIR/usr/share/xsessions/yellowbox.desktop" <<EOF
 [Desktop Entry]
 Name=YellowBox
