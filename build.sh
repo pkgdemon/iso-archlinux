@@ -87,7 +87,7 @@ systemd-nspawn -D "$CHROOT_DIR" bash -c "
 # Get ZFSBootMenu
 echo "Fetching ZFSBootMenu"
 systemd-nspawn -D "$CHROOT_DIR" \
-    bash -c "wget -qO /zfsbootmenu.EFI https://get.zfsbootmenu.org/latest.EFI"
+    bash -c "wget -qO /tmp/zfsbootmenu.EFI https://get.zfsbootmenu.org/latest.EFI"
 
 # Install skeleton for new users
 cp -R overlays/etc/* "$CHROOT_DIR/etc"
@@ -115,8 +115,8 @@ EOF
 
 # Setup GTK 2.0 for users
 cat > "$CHROOT_DIR/etc/gtk-2.0/gtkrc" <<EOF
+include "/usr/share/themes/Mac-OS-9-Classic-XFCEfixes/gtk-2.0/gtkrc"
 export GTK_MODULES=appmenu-gtk-module
-gtk-theme-name=Mac-OS-9-Classic-XFCEfixes
 EOF
 
 # Setup GTK3 for users
