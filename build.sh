@@ -86,8 +86,9 @@ systemd-nspawn -D "$CHROOT_DIR" bash -c "
 
 # Get ZFSBootMenu
 echo "Fetching ZFSBootMenu"
+mkdir -p "$CHROOT_DIR/efi/EFI/zbm/"
 systemd-nspawn -D "$CHROOT_DIR" \
-    bash -c "wget -qO /tmp/zfsbootmenu.EFI https://get.zfsbootmenu.org/latest.EFI"
+    bash -c "wget -qO /efi/EFI/zbm/zfsbootmenu.EFI https://get.zfsbootmenu.org/latest.EFI"
 
 # Install skeleton for new users
 cp -R overlays/etc/* "$CHROOT_DIR/etc"
